@@ -7,7 +7,7 @@ on:
         - main
 
 jobs:
-  test-aws-connection:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -20,12 +20,12 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Gradle
-        run: ./gradlew test
+        run: ./gradlew build
 
       - name: Build Docker image
         run: docker build -t filemanagement-service:latest .
 
-      - name: Set enviroment variables
+      - name: Set environment variables
         run: |
           echo "ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ vars.AWS_REGION }}.amazonaws.com" >> $GITHUB_ENV
           echo "ECR_REPOSITORY=filemanagement-service" >> $GITHUB_ENV
@@ -33,10 +33,10 @@ jobs:
 
       - name: Tag Docker image
         run: |
-          docker tag filemanagement-service:latest ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          docker tag filemanagement-service:latest ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ vars.IMAGE_TAG }}
           docker tag filemanagement-service:latest ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
 
-      - name: Configure AWS_credentials
+      - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_DEPLOY_ACCESS_KEY_ID }}
