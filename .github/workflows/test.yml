@@ -19,10 +19,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
       - name: Build with Gradle
-        run: |
-          chmod +x ./gradlew
-          ./gradlew build
+        run: ./gradlew build
 
       - name: Build Docker image
         run: docker build -t filemanagement-service:latest .
