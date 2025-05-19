@@ -20,7 +20,9 @@ jobs:
           distribution: 'temurin'
 
       - name: Build with Gradle
-        run: ./gradlew build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build
 
       - name: Build Docker image
         run: docker build -t filemanagement-service:latest .
